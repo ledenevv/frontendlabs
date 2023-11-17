@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Графический Редактор</title>
+    <style>
+        #canvas {
+            border: 1px solid #000; /* Толщина и цвет рамки */
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <input type="radio" id="circle" name="shape" value="circle" checked>
+        <label for="circle">Круг</label>
+        <input type="radio" id="rectangle" name="shape" value="rectangle">
+        <label for="rectangle">Квадрат</label>
+        <!-- Добавление элемента управления для толщины линии -->
+        <span id="lineWidthLabel">Толщина линии: 1</span>
+        <input type="range" id="lineWidth" min="1" max="10" value="1">
+        <!-- Добавление элемента управления для цвета линии -->
+        <span id="lineColorLabel">Цвет линии: #000000</span>
+        <input type="color" id="lineColor" value="#000000">
+        <!-- Добавление элемента управления для цвета заливки -->
+        <span id="fillColorLabel">Цвет заливки: #ffffff</span>
+        <input type="color" id="fillColor" value="#ffffff">
+        <!-- Добавление радио-кнопки для овала -->
+    </div>
+    <canvas id="canvas" width="1200" height="600"></canvas>
+    <button id="clearCanvas">Очистить холст</button>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const shapeSelector = document.getElementsByName('shape');
+        const clearButton = document.getElementById('clearCanvas');
+        const lineWidthRange = document.getElementById('lineWidth');
+        const lineWidthLabel = document.getElementById('lineWidthLabel');
+        const lineColorInput = document.getElementById('lineColor');
+        const lineColorLabel = document.getElementById('lineColorLabel');
+        const fillColorInput = document.getElementById('fillColor');
+        const fillColorLabel = document.getElementById('fillColorLabel');
+
+        let drawing = false;
+        let startX, startY;
+        let pencilPoints = [];
+
+        clearButton.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // Обработчик изменения значения толщины линии
+        let lineWidth = 1;
+        lineWidthLabel.textContent = `Толщина линии: ${lineWidth}`;
+        lineWidthRange.addEventListener('input', () => {
+            lineWidth = parseInt(lineWidthRange.value);
+            lineWidthLabel.textContent = `Толщина линии: ${lineWidth}`;
+        });
+
+        // Обработчик изменения значения цвета линии
+        let lineColor = "#000000";
+        lineColorLabel.textContent = `Цвет линии: ${lineColor}`;
+        lineColorInput.addEventListener('input', () => {
+            lineColor = lineColorInput.value;
+            lineColorLabel.textContent = `Цвет линии: ${lineColor}`;
+        });
+
+        // Обработчик изменения значения цвета заливки
+        let fillColor = "#ffffff";
+        fillColorLabel.textContent = `Цвет заливки: ${fillColor}`;
+        fillColorInput.addEventListener('input', () => {
+            fillColor = fillColorInput.value;
+            fillColorLabel.textContent = `Цвет заливки: ${fillColor}`;
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            drawing = true;
+            startX = e.clientX - canvas.getBoundingClientRect().left;
+            startY = e.clientY - canvas.getBoundingClientRect().top;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!drawing) return;
+
+            const shape = document.querySelector('input[name="shape"]:checked').value;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.lineWidth = lineWidth; // Установка толщины линии
+            ctx.strokeStyle = lineColor; // Установка цвета линии
+            ctx.fillStyle = fillColor; // Установка цвета заливки
+
+            if (shape === 'circle') {
+                const radius = Math.sqrt(Math.pow(e.clientX - canvas.getBoundingClientRect().left - startX, 2) + Math.pow(e.clientY - canvas.getBoundingClientRect().top - startY, 2));
+                drawCircle(startX, startY, radius);
+            } else if (shape === 'rectangle') {
+                const width = e.clientX - canvas.getBoundingClientRect().left - startX;
+                const height = e.clientY - canvas.getBoundingClientRect().top - startY;
+                drawRectangle(startX, startY, width, height);
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            drawing = false;
+            if (pencilPoints.length > 0) {
+                pencilPoints = [];
+            }
+        });
+
+        function drawCircle(cx, cy, radius) {
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.fill(); // Заливка фигуры
+            ctx.stroke();
+        }
+
+        function drawRectangle(x, y, width, height) {
+            ctx.beginPath();
+            ctx.rect(x, y, width, height);
+            ctx.fill(); // Заливка фигуры
+            ctx.stroke();
+        }
+    </script>
+</body>
+</html>
