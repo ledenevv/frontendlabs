@@ -1,13 +1,13 @@
 # Леденёв Виталий
 
 группа 110901
-https://main--lustrous-naiad-65445c.netlify.app/
+https://663b5620723d180008a1fea1--boisterous-medovik-5988e6.netlify.app/
 
 # CV
 
 ## _Ledzianiou Vitaly_
 
-![alt text](image.png)
+![alt text](photo_2024-05-08_13-36-14.jpg)
 
 ### Contact information
 
